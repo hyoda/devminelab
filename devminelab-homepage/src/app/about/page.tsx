@@ -74,11 +74,11 @@ export default function About() {
                 <h2 className="text-3xl font-bold text-gray-900">비전</h2>
               </div>
               <p className="text-lg text-gray-700 leading-relaxed mb-8">
-                <strong>중소기업과 스타트업의 디지털 역량 강화를 통해 기술이 만드는 더 나은 비즈니스 환경을 구현합니다.</strong>
+                <strong>지역 경제의 혁신적 성장을 위한 '스위칭 허브' 역할을 통해 지속 가능한 경제 생태계를 구축합니다.</strong>
               </p>
               <p className="text-gray-600">
-                우리는 AI 기술이 대기업뿐만 아니라 모든 규모의 기업에서 활용될 수 있도록 
-                접근 가능하고 실용적인 솔루션을 만들어 갑니다.
+                우리는 중소기업과 스타트업이 AI 기술의 혜택을 누릴 수 있도록 
+                실용적이고 접근 가능한 솔루션을 개발하여, 지역 경제의 디지털 전환을 선도합니다.
               </p>
             </div>
             

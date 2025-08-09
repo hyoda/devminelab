@@ -52,7 +52,7 @@ export default function Contact() {
     {
       icon: <Mail className="w-6 h-6" />,
       title: "이메일",
-      content: "contact@hyoda.kr",
+      content: "hdseo@devmine.co.kr",
       description: "언제든지 문의해주세요"
     },
     {

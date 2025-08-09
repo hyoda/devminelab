@@ -103,5 +103,6 @@ Copyright © 2024 데브마인랩. All rights reserved.
 
 ## 📧 문의
 
-- 이메일: contact@hyoda.kr
-- 웹사이트: https://hyoda.kr
+- 이메일: hdseo@devmine.co.kr
+- 웹사이트: https://devmine.co.kr
+- 운영시간: 평일 09:00 - 18:00

@@ -190,7 +190,7 @@ export default function Home() {
         '지역 언론 주목으로 전국적 관심 확산',
         '워케이션 모델의 실현 가능성 입증'
       ],
-      image: '/images/namhae-2020.jpg'
+      image: 'https://placehold.co/1200x800/e2e8f0/475569?text=Namhae+2020'
     },
     {
       id: '2021',
@@ -209,7 +209,7 @@ export default function Home() {
         '참가 청년들의 지역 정착률 25% 달성',
         '지역 상권 활성화 기여'
       ],
-      image: '/images/namhae-2021.jpg'
+      image: 'https://placehold.co/1200x800/e2e8f0/475569?text=Namhae+2021'
     },
     {
       id: '2022',
@@ -228,7 +228,7 @@ export default function Home() {
         '경남도 차원의 정책 관심 유도',
         '지역 혁신 모델로 인정받음'
       ],
-      image: '/images/namhae-2022.jpg'
+      image: 'https://placehold.co/1200x800/e2e8f0/475569?text=Namhae+2022'
     }
   ];
 
@@ -273,7 +273,7 @@ export default function Home() {
       category: '라이프스타일',
       href: '#',
       isExternal: true,
-      image: '/images/media-1.jpg'
+      image: 'https://placehold.co/800x560/e2e8f0/475569?text=Media+1'
     },
     {
       title: '경남도, 18개 시군 체험마을과 코워킹 플랫폼 연계 추진',
@@ -282,7 +282,7 @@ export default function Home() {
       category: '정책',
       href: '#',
       isExternal: true,
-      image: '/images/media-2.jpg'
+      image: 'https://placehold.co/800x560/e2e8f0/475569?text=Media+2'
     },
     {
       title: 'IT 청년들이 선택한 새로운 일터, 남해',
@@ -291,7 +291,7 @@ export default function Home() {
       category: '청년 정책',
       href: '#',
       isExternal: true,
-      image: '/images/media-3.jpg'
+      image: 'https://placehold.co/800x560/e2e8f0/475569?text=Media+3'
     }
   ];
 

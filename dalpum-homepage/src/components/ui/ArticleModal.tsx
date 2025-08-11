@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react';
 import { X, ExternalLink, Calendar, Tag } from 'lucide-react';
 import Button from './Button';
-import Card from './Card';
 
 interface Article {
   title: string;

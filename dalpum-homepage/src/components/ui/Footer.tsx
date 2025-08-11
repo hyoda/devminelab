@@ -1,6 +1,5 @@
 'use client';
 
-import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
 import { Mail, Phone, MapPin, ExternalLink, ArrowUp } from 'lucide-react';
 import Button from './Button';

@@ -2,14 +2,13 @@
 
 import { useState } from 'react';
 import HeroSection from '@/components/ui/HeroSection';
-import Link from 'next/link';
 import SectionTitle from '@/components/ui/SectionTitle';
 import Tabs, { TabPanel } from '@/components/ui/Tabs';
 import Timeline from '@/components/ui/Timeline';
 import Card from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
 import ArticleModal from '@/components/ui/ArticleModal';
-import { Target, Users, Lightbulb, Building2, FileText, Newspaper, Mail, Phone } from 'lucide-react';
+import { Target, Users, Lightbulb, Building2, Newspaper } from 'lucide-react';
 
 export default function Home() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -235,37 +234,6 @@ export default function Home() {
     }
   ];
 
-  // 정책 제안서 데이터
-  const policyDocuments = [
-    {
-      title: '남해 스위칭 허브: 최종 실행 전략 보고서 (넥스트윙)',
-      description: '기술 민주화와 전문성 패키징 기반의 실행 전략 요약 인포그래픽.',
-      date: '2025.08.08',
-      category: '전략 보고서',
-      href: '/infographics/nextwing-namhae'
-    },
-    {
-      title: '스위칭 허브 최종 보고서_for_남해',
-      description: '이론적 토대와 벤치마킹, 리스크 회피 설계 요약 인포그래픽.',
-      date: '2025.08.08',
-      category: '최종 보고서',
-      href: '/infographics/switching-hub-final'
-    },
-    {
-      title: '스위칭허브_for_남해',
-      description: '스위칭 허브 개요와 작동원리, 전환 메커니즘 요약.',
-      date: '2025.08.08',
-      category: '개념 정리',
-      href: '/infographics/switching-hub'
-    },
-    {
-      title: '지역 상생형 스위칭 허브_for_남해',
-      description: '하이퍼 로컬 전략과 커뮤니티 기반 확산, KPI 프레임워크 요약.',
-      date: '2025.08.08',
-      category: '제안서',
-      href: '/infographics/regional-switching-hub'
-    }
-  ];
 
   // 언론 보도 데이터
   const mediaArticles = [
@@ -558,7 +526,7 @@ export default function Home() {
                   지역의 잠재력을 <span className="text-indigo-600">성장의 에너지</span>로
                 </h2>
                 <p className="mt-6 text-lg md:text-xl text-slate-600 max-w-3xl mx-auto">
-                  '스위칭 허브'는 유동 인재와 지역 사회를 연결하여 지속 가능한 일자리와 새로운 가치를 창출하는 지역 상생형 비즈니스 모델입니다.
+                  &lsquo;스위칭 허브&rsquo;는 유동 인재와 지역 사회를 연결하여 지속 가능한 일자리와 새로운 가치를 창출하는 지역 상생형 비즈니스 모델입니다.
                 </p>
                 <div className="mt-10 flex justify-center gap-4">
                   <a href="#model" className="bg-indigo-600 text-white px-8 py-3 rounded-lg text-lg font-semibold hover:bg-indigo-700 transition">
@@ -619,13 +587,13 @@ export default function Home() {
               <div className="text-center mb-12 ">
                 <h3 className="text-sm font-bold text-indigo-600 uppercase">THE SOLUTION</h3>
                 <h4 className="text-3xl md:text-4xl font-bold text-slate-900 mt-2">새로운 패러다임: 스위칭 허브</h4>
-                <p className="mt-4 text-slate-600 max-w-2xl mx-auto">유동인구의 잠재력을 지역의 기회로 '전환(Switching)'하여 자생적 성장 생태계를 구축합니다.</p>
+                <p className="mt-4 text-slate-600 max-w-2xl mx-auto">유동인구의 잠재력을 지역의 기회로 &lsquo;전환(Switching)&rsquo;하여 자생적 성장 생태계를 구축합니다.</p>
               </div>
               <div className="bg-white p-8 md:p-12 rounded-2xl shadow-lg ">
                 <div className="grid md:grid-cols-2 gap-8 md:gap-12 items-center">
                   <div>
                     <h5 className="text-2xl font-bold text-slate-900">무엇이 다른가?</h5>
-                    <p className="mt-4 text-slate-600">스위칭 허브는 단순한 공간이 아닌, '계획된 우연(Engineered Serendipity)'을 통해 방문객과 지역 주민, 리더 간의 의미있는 상호작용을 촉진하는 역동적인 플랫폼입니다.</p>
+                    <p className="mt-4 text-slate-600">스위칭 허브는 단순한 공간이 아닌, &lsquo;계획된 우연(Engineered Serendipity)&rsquo;을 통해 방문객과 지역 주민, 리더 간의 의미있는 상호작용을 촉진하는 역동적인 플랫폼입니다.</p>
                     <ul className="mt-6 space-y-4">
                       <li className="flex items-start">
                         <div className="flex-shrink-0 h-6 w-6 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center mr-4 mt-1">✓</div>
@@ -637,7 +605,7 @@ export default function Home() {
                       </li>
                       <li className="flex items-start">
                         <div className="flex-shrink-0 h-6 w-6 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center mr-4 mt-1">✓</div>
-                        <span className="text-slate-700"><b>시장 형성:</b> 지역의 필요와 외부 인재 사이의 정보 비대칭성을 해소하는 '시장 형성자' 역할 수행</span>
+                        <span className="text-slate-700"><b>시장 형성:</b> 지역의 필요와 외부 인재 사이의 정보 비대칭성을 해소하는 &lsquo;시장 형성자&rsquo; 역할 수행</span>
                       </li>
                     </ul>
                   </div>
@@ -677,7 +645,7 @@ export default function Home() {
               <div className="text-center mb-12 ">
                 <h3 className="text-sm font-bold text-indigo-600 uppercase">THE MODEL</h3>
                 <h4 className="text-3xl md:text-4xl font-bold text-slate-900 mt-2">기회의 엔진: 어떻게 작동하는가?</h4>
-                <p className="mt-4 text-slate-600 max-w-2xl mx-auto">스위칭 허브는 '선순환 설계자'의 리더십과 체계적인 사용자 유입 경로를 통해 지속 가능한 가치를 창출합니다.</p>
+                <p className="mt-4 text-slate-600 max-w-2xl mx-auto">스위칭 허브는 &lsquo;선순환 설계자&rsquo;의 리더십과 체계적인 사용자 유입 경로를 통해 지속 가능한 가치를 창출합니다.</p>
               </div>
 
               {/* Virtuous Cycle Architect */}
@@ -691,11 +659,11 @@ export default function Home() {
                     <p className="text-slate-600 mt-2">The Virtuous Cycle Architect</p>
                   </div>
                   <div className="md:col-span-3">
-                    <p className="text-lg text-slate-700 mb-4">생태계의 핵심 동력인 '선순환 설계자'는 단순히 베푸는 사람이 아닌, 지성과 전략으로 지속 가능한 상생의 '시스템'을 설계하는 리더입니다.</p>
+                    <p className="text-lg text-slate-700 mb-4">생태계의 핵심 동력인 &lsquo;선순환 설계자&rsquo;는 단순히 베푸는 사람이 아닌, 지성과 전략으로 지속 가능한 상생의 &lsquo;시스템&rsquo;을 설계하는 리더입니다.</p>
                     <ul className="space-y-3">
                       <li className="flex items-center"><span className="font-bold text-indigo-600 mr-2">✓</span> 검증된 사업 성공 경험과 높은 신뢰</li>
                       <li className="flex items-center"><span className="font-bold text-indigo-600 mr-2">✓</span> 비즈니스 모델 공유, 인재 멘토링, 네트워크 재투자</li>
-                      <li className="flex items-center"><span className="font-bold text-indigo-600 mr-2">✓</span> '타인 지향적 이기주의'로 Win-Win 시나리오 설계</li>
+                      <li className="flex items-center"><span className="font-bold text-indigo-600 mr-2">✓</span> &lsquo;타인 지향적 이기주의&rsquo;로 Win-Win 시나리오 설계</li>
                     </ul>
                   </div>
                 </div>
@@ -724,7 +692,7 @@ export default function Home() {
                   <div className="text-center p-4 w-full md:w-1/3">
                     <div className="bg-indigo-500 text-white w-16 h-16 rounded-full flex items-center justify-center mx-auto text-2xl font-bold">3</div>
                     <h6 className="text-xl font-bold mt-4">전환 & 기여</h6>
-                    <p className="text-slate-600 mt-2">창업, 협업 프로젝트, 직접 고용 등 실질적 기여로 '전환'</p>
+                    <p className="text-slate-600 mt-2">창업, 협업 프로젝트, 직접 고용 등 실질적 기여로 &lsquo;전환&rsquo;</p>
                   </div>
                 </div>
               </div>
@@ -736,8 +704,8 @@ export default function Home() {
             <div className="container mx-auto px-6">
               <div className="text-center mb-12 ">
                 <h3 className="text-sm font-bold text-indigo-600 uppercase">CASE STUDY</h3>
-                <h4 className="text-3xl md:text-4xl font-bold text-slate-900 mt-2">남해의 선례: '달품' 효과</h4>
-                <p className="mt-4 text-slate-600 max-w-2xl mx-auto">공식적인 지원 없이도 자생적으로 커뮤니티 허브 역할을 수행한 게스트하우스 '달품'의 사례는 스위칭 허브 모델의 가능성을 증명합니다.</p>
+                <h4 className="text-3xl md:text-4xl font-bold text-slate-900 mt-2">남해의 선례: &lsquo;달품&rsquo; 효과</h4>
+                <p className="mt-4 text-slate-600 max-w-2xl mx-auto">공식적인 지원 없이도 자생적으로 커뮤니티 허브 역할을 수행한 게스트하우스 &lsquo;달품&rsquo;의 사례는 스위칭 허브 모델의 가능성을 증명합니다.</p>
               </div>
               <div className="grid md:grid-cols-2 gap-8 items-center">
                 <div className="">
@@ -802,18 +770,18 @@ export default function Home() {
                 </div>
                 <div className="">
                   <div className="bg-white p-8 rounded-2xl shadow-lg">
-                    <h5 className="text-2xl font-bold text-slate-900">사례: '김식당'의 탄생</h5>
+                    <h5 className="text-2xl font-bold text-slate-900">사례: &lsquo;김식당&rsquo;의 탄생</h5>
                     <p className="mt-4 text-slate-600">
-                      '김식당' 창업자는 가게 오픈 전 '달품'에 머물며 호스트('선순환 설계자')로부터 실질적인 자문과 격려를 받았습니다. 이는 방문객의 아이디어가 지역 리더의 멘토십과 만나 실제 사업체로 '전환'된 전형적인 사례입니다.
+                      &lsquo;김식당&rsquo; 창업자는 가게 오픈 전 &lsquo;달품&rsquo;에 머물며 호스트(&lsquo;선순환 설계자&rsquo;)로부터 실질적인 자문과 격려를 받았습니다. 이는 방문객의 아이디어가 지역 리더의 멘토십과 만나 실제 사업체로 &lsquo;전환&rsquo;된 전형적인 사례입니다.
                     </p>
                     <blockquote className="mt-6 border-l-4 border-indigo-500 pl-4 italic text-slate-700">
-                      "방문객의 잠재력(아이디어) + 지역 리더의 경험(멘토십) = 새로운 가치(창업)"
+                      &ldquo;방문객의 잠재력(아이디어) + 지역 리더의 경험(멘토십) = 새로운 가치(창업)&rdquo;
                     </blockquote>
                   </div>
                   <div className="bg-white p-8 rounded-2xl shadow-lg mt-6">
-                    <h5 className="text-2xl font-bold text-slate-900">워케이션의 '자석 효과'</h5>
+                    <h5 className="text-2xl font-bold text-slate-900">워케이션의 &lsquo;자석 효과&rsquo;</h5>
                     <p className="mt-4 text-slate-600">
-                      '달품'은 개발자 커뮤니티의 워케이션 성지로 알려지며 특정 전문가 집단을 유치했습니다. 이는 허브가 고도의 전문성을 기반으로 한 협업, 혁신, 고급 일자리 창출의 거점이 될 수 있음을 보여줍니다.
+                      &lsquo;달품&rsquo;은 개발자 커뮤니티의 워케이션 성지로 알려지며 특정 전문가 집단을 유치했습니다. 이는 허브가 고도의 전문성을 기반으로 한 협업, 혁신, 고급 일자리 창출의 거점이 될 수 있음을 보여줍니다.
                     </p>
                   </div>
                 </div>
@@ -838,7 +806,7 @@ export default function Home() {
                       </div>
                       <div className="ml-4 md:ml-0 md:mt-4 md:text-center">
                         <h5 className="text-xl font-bold">1단계: 기반 구축 (1년차)</h5>
-                        <p className="mt-2 text-slate-600">부지 선정 및 허브 조성, '선순환 설계자' 모집, 파일럿 프로그램 론칭</p>
+                        <p className="mt-2 text-slate-600">부지 선정 및 허브 조성, &lsquo;선순환 설계자&rsquo; 모집, 파일럿 프로그램 론칭</p>
                       </div>
                     </div>
                   </div>

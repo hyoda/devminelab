@@ -2,7 +2,6 @@
 
 import { ReactNode } from 'react';
 import { cn } from '@/lib/utils';
-import { useIsMobile, useIsTablet, useIsDesktop } from '@/lib/hooks';
 
 interface ResponsiveContainerProps {
   children: ReactNode;
@@ -19,9 +18,6 @@ export default function ResponsiveContainer({
   padding = 'md',
   centerContent = false
 }: ResponsiveContainerProps) {
-  const isMobile = useIsMobile();
-  const isTablet = useIsTablet();
-  const isDesktop = useIsDesktop();
 
   const maxWidthClasses = {
     sm: 'max-w-sm',

@@ -50,11 +50,6 @@ function parseArticles(html: string) {
   }> = [];
 
   try {
-    // 기사 목록 패턴 찾기 (실제 HTML 구조에 맞게 조정 필요)
-    const articleRegex = /<div[^>]*class="[^"]*article[^"]*"[^>]*>([\s\S]*?)<\/div>/gi;
-    const titleRegex = /<a[^>]*href="([^"]*)"[^>]*>([^<]+)<\/a>/gi;
-    const dateRegex = /(\d{4}[-./]\d{2}[-./]\d{2})/;
-    const imageRegex = /<img[^>]*src="([^"]*)"[^>]*>/i;
 
     let match;
     let count = 0;

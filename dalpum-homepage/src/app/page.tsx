@@ -299,6 +299,15 @@ export default function Home() {
       isExternal: true,
       image: "http://www.nhtimes.co.kr/news/photo/202106/55080_55827_947.gif",
     },
+    {
+      title: "새로운 라이프스타일, 남해 워케이션을 허(許)하라!",
+      description: "남해 워케이션을 허(許)하라!",
+      date: "2022.11.04",
+      category: "워케이션 프로그램",
+      href: "http://www.nhtimes.co.kr/news/articleView.html?idxno=58892",
+      isExternal: true,
+      image: "http://www.nhtimes.co.kr/news/photo/202211/58892_60652_2822.gif",
+    },
   ];
 
   return (

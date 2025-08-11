@@ -1,15 +1,12 @@
-name: Deploy Dalpum Homepage
+name: Deploy to Production
 
 on:
   push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
+    branches: [ main ]
+  workflow_dispatch:
 
 jobs:
-  build-and-deploy:
+  deploy:
     runs-on: ubuntu-latest
     
     steps:
@@ -19,7 +16,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '20'
           cache: 'npm'
 
       - name: Install dependencies
@@ -27,34 +24,21 @@ jobs:
 
       - name: Build application
         run: npm run build
-        env:
-          NODE_ENV: production
-
-      - name: Login to Docker Hub
-        if: github.ref == 'refs/heads/main'
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-
-      - name: Build and push Docker image
-        if: github.ref == 'refs/heads/main'
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/dalpum-homepage:latest
 
       - name: Deploy to server
-        if: github.ref == 'refs/heads/main'
-        uses: appleboy/ssh-action@v1.0.0
+        uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.PRIVATE_KEY }}
+          port: 22
           script: |
             cd /home/ubuntu/dalpum-homepage
-            docker-compose pull
-            docker-compose down
-            docker-compose up -d
-            docker system prune -f
+            git pull origin main
+            source ~/.nvm/nvm.sh
+            nvm use node
+            npm ci
+            npm run build
+            sed -i 's/next start -p [0-9]*/next start -p 12300/' package.json
+            pm2 restart dalpum-homepage || pm2 start ecosystem.config.js
+            pm2 save

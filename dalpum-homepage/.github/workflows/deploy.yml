@@ -25,20 +25,33 @@ jobs:
       - name: Build application
         run: npm run build
 
-      - name: Deploy to server
-        uses: appleboy/ssh-action@v1.0.3
+      - name: Start SSH agent and add private key
+        uses: webfactory/ssh-agent@v0.9.0
         with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USERNAME }}
-          key: ${{ secrets.PRIVATE_KEY }}
-          port: 22
-          script: |
+          ssh-private-key: ${{ secrets.PRIVATE_KEY }}
+
+      - name: Setup known_hosts
+        run: |
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          ssh-keyscan -H ${{ secrets.HOST }} >> ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/known_hosts
+
+      - name: Deploy via SSH
+        env:
+          SSHPARAMS: "-o BatchMode=yes -o StrictHostKeyChecking=yes -o IdentitiesOnly=yes"
+        run: |
+          ssh $SSHPARAMS ${{ secrets.USERNAME }}@${{ secrets.HOST }} '
+            set -e
             cd /home/ubuntu/dalpum-homepage
-            git pull origin main
+            git fetch --all --prune
+            git reset --hard origin/main
             source ~/.nvm/nvm.sh
-            nvm use node
+            nvm install 20
+            nvm use 20
             npm ci
             npm run build
-            sed -i 's/next start -p [0-9]*/next start -p 12300/' package.json
+            sed -i "s/next start -p [0-9]*/next start -p 12300/" package.json
             pm2 restart dalpum-homepage || pm2 start ecosystem.config.js
             pm2 save
+          '

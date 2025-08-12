@@ -234,3 +234,43 @@ sudo logrotate /etc/logrotate.d/nginx
 **마지막 업데이트**: 2025-08-11  
 **작성자**: Claude Code Assistant  
 **리포지토리**: https://github.com/hyoda/dalpum-homepage
+
+
+---
+
+이 에러는 서버의 `origin`이 HTTPS로 되어 있고, 프라이빗 저장소라 인증이 필요한데 비밀번호 방식이 막혀서 발생합니다. 서버에서 GitHub을 SSH로 읽을 수 있게 “배포용 Deploy Key”를 설정하고 `origin`을 SSH로 바꾸면 해결됩니다.
+
+다음 명령을 EC2 서버에서 실행하세요.
+
+1) 배포 키 생성 및 에이전트 등록
+```bash
+ssh-keygen -t ed25519 -C "dalpum-homepage deploy" -f ~/.ssh/dalpum_homepage_deploy -N ""
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/dalpum_homepage_deploy
+
+# SSH 설정과 GitHub 호스트키 등록
+printf "Host github.com\n  HostName github.com\n  User git\n  IdentityFile ~/.ssh/dalpum_homepage_deploy\n  IdentitiesOnly yes\n" >> ~/.ssh/config
+chmod 600 ~/.ssh/config
+ssh-keyscan -H github.com >> ~/.ssh/known_hosts
+```
+
+2) 공개키를 GitHub에 등록
+```bash
+cat ~/.ssh/dalpum_homepage_deploy.pub
+```
+- 출력된 키를 GitHub 저장소 `hyoda/dalpum-homepage` → Settings → Deploy keys → Add deploy key에 등록 (Read-only로 충분)
+
+3) 저장소 `origin`을 SSH로 변경 후 동기화
+```bash
+cd ~/dalpum-homepage
+git remote set-url origin git@github.com:hyoda/dalpum-homepage.git
+git fetch --all --prune
+git reset --hard origin/main
+```
+
+이후 `git pull` 시 더 이상 사용자/비밀번호를 묻지 않고 정상 동작합니다. 우리 GitHub Actions 워크플로우는 원격 서버에서 `git fetch/reset`을 실행하므로, 위 구성(서버의 SSH Deploy Key + SSH origin)이 반드시 필요합니다.
+
+차선책(권장하지 않음): PAT를 서버에 저장해 HTTPS로 풀
+- 보안상 좋지 않으니 권장하지 않습니다. 꼭 필요하면 말씀 주세요, 안전한 설정 절차를 안내드리겠습니다.
+
+- 핵심 변경: EC2 `~/.ssh/`에 배포키 생성/등록, GitHub 저장소에 Deploy Key 등록, 서버 저장소 `origin`을 `git@github.com:hyoda/dalpum-homepage.git`로 변경

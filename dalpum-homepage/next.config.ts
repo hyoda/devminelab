@@ -19,6 +19,10 @@ const nextConfig: NextConfig = {
         protocol: 'http',
         hostname: 'www.nhtimes.co.kr',
       },
+      {
+        protocol: 'http',
+        hostname: 'localhost',
+      },
     ],
   },
 };

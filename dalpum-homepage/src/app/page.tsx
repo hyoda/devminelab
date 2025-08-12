@@ -8,7 +8,8 @@ import Timeline from '@/components/ui/Timeline';
 import Card from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
 import ArticleModal from '@/components/ui/ArticleModal';
-import { Target, Users, Lightbulb, Building2, Newspaper } from 'lucide-react';
+import Gallery from '@/components/ui/Gallery';
+import { Target, Users, Lightbulb, Building2, Newspaper, Camera } from 'lucide-react';
 
 export default function Home() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -278,6 +279,100 @@ export default function Home() {
     },
   ];
 
+  // 갤러리 이미지 데이터 (테스트용으로 일부만)
+  const galleryImages = [
+    {
+      src: "/images/IMG_7440.jpg",
+      alt: "남해 워크숍 현장 25년 8월 11일",
+      title: "남해 워크숍 사진",
+      description: "남해대학에서 진행된 남해 워크숍 현장",
+    },
+    {
+      src: "/images/IMG_7443.jpg",
+      alt: "남해 워크숍 현장 25년 8월 11일",
+      title: "남해 워크숍 사진",
+      description: "남해대학에서 진행된 남해 워크숍 현장",
+    },
+    {
+      src: "/images/IMG_7456.jpg",
+      alt: "남해 워크숍 현장 25년 8월 11일",
+      title: "남해 워크숍 사진",
+      description: "남해대학에서 진행된 남해 워크숍 현장",
+    },
+    {
+      src: "/images/IMG_7463.jpg",
+      alt: "남해 워크숍 현장 25년 8월 11일",
+      title: "남해 워크숍 사진",
+      description: "남해대학에서 진행된 남해 워크숍 현장",
+    },
+    {
+      src: "/images/IMG_7464.jpg",
+      alt: "남해 워크숍 현장 25년 8월 11일",
+      title: "남해 워크숍 사진",
+      description: "남해대학에서 진행된 남해 워크숍 현장",
+    },
+    {
+      src: "/images/IMG_7466.jpg",
+      alt: "남해 워크숍 현장 25년 8월 11일",
+      title: "남해 워크숍 사진",
+      description: "남해대학에서 진행된 남해 워크숍 현장",
+    },
+    {
+      src: "/images/IMG_7468.jpg",
+      alt: "남해 워크숍 현장 25년 8월 11일",
+      title: "남해 워크숍 사진",
+      description: "남해대학에서 진행된 남해 워크숍 현장",
+    },
+    {
+      src: "/images/IMG_7469.jpg",
+      alt: "남해 워크숍 현장 25년 8월 11일",
+      title: "남해 워크숍 사진",
+      description: "남해대학에서 진행된 남해 워크숍 현장",
+    },
+    {
+      src: "/images/IMG_7470.jpg",
+      alt: "남해 워크숍 현장 25년 8월 11일",
+      title: "남해 워크숍 사진",
+      description: "남해대학에서 진행된 남해 워크숍 현장",
+    },
+    {
+      src: "/images/IMG_7472.jpg",
+      alt: "남해 워크숍 현장 25년 8월 11일",
+      title: "남해 워크숍 사진",
+      description: "남해대학에서 진행된 남해 워크숍 현장",
+    },
+    {
+      src: "/images/IMG_7473.jpg",
+      alt: "남해 워크숍 현장 25년 8월 11일",
+      title: "남해 워크숍 사진",
+      description: "남해대학에서 진행된 남해 워크숍 현장",
+    },
+    {
+      src: "/images/IMG_7476.jpg",
+      alt: "남해 워크숍 현장 25년 8월 11일",
+      title: "남해 워크숍 사진",
+      description: "남해대학에서 진행된 남해 워크숍 현장",
+    },
+    {
+      src: "/images/IMG_7495.jpg",
+      alt: "남해 워크숍 현장 25년 8월 11일",
+      title: "남해 워크숍 사진",
+      description: "남해대학에서 진행된 남해 워크숍 현장",
+    },
+    {
+      src: "/images/IMG_7506.jpg",
+      alt: "남해 워크숍 현장 25년 8월 11일",
+      title: "남해 워크숍 사진",
+      description: "남해대학에서 진행된 남해 워크숍 현장",
+    },
+    {
+      src: "/images/남해 워케이션 타임라인(김강수).png",
+      alt: "남해 워케이션 타임라인",
+      title: "남해 워케이션 타임라인",
+      description: "김강수님이 작성한 남해 워케이션 프로젝트의 전체 타임라인",
+    },
+  ];
+
   return (
     <>
       {/* Hero Section */}
@@ -512,6 +607,7 @@ export default function Home() {
               <a href="#model" className="text-slate-600 hover:text-indigo-600 transition">스위칭 허브</a>
               <a href="#cases" className="text-slate-600 hover:text-indigo-600 transition">남해 워케이션</a>
               <a href="#archive" className="text-slate-600 hover:text-indigo-600 transition">연구 성과물</a>
+              <a href="#gallery" className="text-slate-600 hover:text-indigo-600 transition">갤러리</a>
               <a href="#media" className="text-slate-600 hover:text-indigo-600 transition">언론 보도</a>
             </nav>
           </div>
@@ -840,6 +936,26 @@ export default function Home() {
         </main>
 
 
+      </section>
+
+      {/* 갤러리 섹션 */}
+      <section id="gallery" className="section-padding bg-surface">
+        <div className="container-dalpum">
+          <SectionTitle
+            subtitle="활동 기록"
+            title="남해 워케이션 갤러리"
+            description="2020년부터 3년간 진행된 남해 워케이션 프로그램의 생생한 현장을 사진으로 만나보세요. 서로학교 멤버들과 참가자들의 활동 모습을 통해 스위칭 허브 모델의 실제 적용 과정을 확인할 수 있습니다."
+          />
+          
+          <Gallery images={galleryImages} className="mb-12" />
+          
+          <div className="text-center">
+            <div className="inline-flex items-center gap-2 px-6 py-3 bg-white rounded-full shadow-sm border border-gray-200">
+              <Camera className="w-5 h-5 text-primary" />
+              <span className="text-muted font-medium">총 {galleryImages.length}장의 사진</span>
+            </div>
+          </div>
+        </div>
       </section>
 
       {/* 언론 보도 */}

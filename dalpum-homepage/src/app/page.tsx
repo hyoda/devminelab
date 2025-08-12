@@ -380,7 +380,7 @@ export default function Home() {
         title={
           <>
             6년간 성장한<br />
-            <span className="text-white drop-shadow-lg">서로학교 활동 분석</span>
+            <span className="text-primary drop-shadow-lg">서로학교 활동 분석</span>
           </>
         }
         subtitle="Seoro School Activity Analysis"

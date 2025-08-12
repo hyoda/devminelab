@@ -75,6 +75,8 @@
     --foreground: #f1f5f9;
     --pearl: #1e293b;
     --stone: #94a3b8;
+    --ocean-primary: #3b82f6;  /* Brighter blue for better contrast in dark mode */
+    --ocean-light: #60a5fa;    /* Adjusted for better visibility */
   }
 }
 

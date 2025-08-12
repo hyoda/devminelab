@@ -134,20 +134,6 @@ export default function Navbar() {
               ))}
             </div>
 
-            {/* CTA Button */}
-            <div className="hidden md:block">
-              <Button
-                variant={isScrolled ? 'primary' : 'outline'}
-                size="sm"
-                onClick={() => scrollToSection('#contact')}
-                className={cn(
-                  'transition-all duration-300',
-                  !isScrolled && 'border-white/30 text-white hover:bg-white/10'
-                )}
-              >
-연구 제안
-              </Button>
-            </div>
 
             {/* Mobile Menu Button */}
             <button
@@ -203,21 +189,6 @@ export default function Navbar() {
                       </div>
                     </motion.button>
                   ))}
-                  <motion.div
-                    className="pt-4 border-t border-gray-100"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.6 }}
-                  >
-                    <Button
-                      variant="primary"
-                      size="sm"
-                      onClick={() => scrollToSection('#contact')}
-                      className="w-full"
-                    >
-연구 제안
-                    </Button>
-                  </motion.div>
                 </div>
               </div>
             </motion.div>

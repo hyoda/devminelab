@@ -1,0 +1,33 @@
+{
+  "folders": [
+    {
+      "name": "DevMineLab Root",
+      "path": "."
+    },
+    {
+      "name": "Dalpum Homepage",
+      "path": "dalpum-homepage"
+    },
+    {
+      "name": "Crawlcat Homepage",
+      "path": "crawlcat-homepage"
+    },
+    {
+      "name": "N-Auto Homepage",
+      "path": "n-auto-homepage"
+    },
+    {
+      "name": "YouTube Downloader Homepage",
+      "path": "youtube-downloader-homepage"
+    },
+    {
+      "name": "Miracle Homepage",
+      "path": "miracle-homepage"
+    }
+  ],
+  "settings": {
+    "git.autoRepositoryDetection": true,
+    "git.repositoryScanMaxDepth": 20,
+    "git.detectSubmodules": true
+  }
+}

@@ -2,21 +2,21 @@
 @import "tailwindcss";
 
 :root {
-  /* Base Colors */
+  /* Base Colors - 최적화된 밝은 테마 */
   --background: #ffffff;
-  --foreground: #1a1a1a;
+  --foreground: #1f2937;        /* 더 부드러운 검정색 */
   
   /* Dalpum Brand Colors - Inspired by Namhae Ocean */
-  --ocean-deep: #0d4f8c;        /* Deep ocean blue */
-  --ocean-primary: #1e5f99;      /* Primary ocean blue */
-  --ocean-light: #4a90c2;       /* Light ocean blue */
-  --emerald: #10b981;           /* Emerald green */
-  --emerald-light: #34d399;     /* Light emerald */
-  --coral: #ff6b6b;            /* Coral orange */
-  --lime: #84cc16;             /* Lime green */
-  --sand: #f5f5dc;             /* Sand beige */
-  --stone: #6b7280;            /* Stone gray */
-  --pearl: #f8fafc;            /* Pearl white */
+  --ocean-deep: #0f4e75;        /* 깊고 차분한 바다색 */
+  --ocean-primary: #1e5f99;     /* 주 브랜드 색상 */
+  --ocean-light: #3b82f6;       /* 밝고 선명한 파란색 */
+  --emerald: #059669;           /* 차분한 에메랄드 */
+  --emerald-light: #10b981;     /* 밝은 에메랄드 */
+  --coral: #ef4444;             /* 선명한 코랄 */
+  --lime: #65a30d;              /* 차분한 라임 */
+  --sand: #fef3c7;              /* 따뜻한 모래색 */
+  --stone: #64748b;             /* 부드러운 회색 */
+  --pearl: #f8fafc;             /* 진주 흰색 */
   
   /* Semantic Colors */
   --primary: var(--ocean-primary);
@@ -69,16 +69,8 @@
   --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0f172a;
-    --foreground: #f1f5f9;
-    --pearl: #1e293b;
-    --stone: #94a3b8;
-    --ocean-primary: #3b82f6;  /* Brighter blue for better contrast in dark mode */
-    --ocean-light: #60a5fa;    /* Adjusted for better visibility */
-  }
-}
+/* 시스템 테마와 독립적으로 밝은 테마 고정 */
+/* 다크 모드 미디어 쿼리 제거하여 항상 라이트 모드 유지 */
 
 /* Base Styles */
 * {
@@ -87,6 +79,7 @@
 
 html {
   scroll-behavior: smooth;
+  color-scheme: light !important; /* 시스템 테마 무시하고 라이트 모드 강제 */
 }
 
 body {
@@ -96,6 +89,7 @@ body {
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  color-scheme: light !important; /* 시스템 테마 무시하고 라이트 모드 강제 */
 }
 
 /* Typography Utilities */
@@ -107,11 +101,12 @@ body {
   text-wrap: balance;
 }
 
-/* Hero dotted background pattern */
+/* Hero dotted background pattern - 더 부드러운 패턴 */
 .bg-hero-pattern {
   background-color: var(--color-surface);
-  background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
-  background-size: 20px 20px;
+  background-image: radial-gradient(var(--color-stone) 0.5px, transparent 0.5px);
+  background-size: 24px 24px;
+  opacity: 0.4;
 }
 
 /* Layout Utilities */
@@ -150,20 +145,22 @@ body {
   color: white;
 }
 
-/* Scrollbar Styles */
+/* Scrollbar Styles - 밝은 테마 최적화 */
 ::-webkit-scrollbar {
   width: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--pearl);
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--muted);
+  background: var(--color-surface);
   border-radius: var(--radius);
 }
 
+::-webkit-scrollbar-thumb {
+  background: var(--color-muted);
+  border-radius: var(--radius);
+  border: 1px solid var(--color-surface);
+}
+
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--primary);
+  background: var(--color-primary);
 }

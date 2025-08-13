@@ -1,0 +1,195 @@
+{
+  "name": "GitHub 배포 알림 시스템",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "devminelab-deploy",
+        "options": {}
+      },
+      "id": "github-webhook",
+      "name": "GitHub Deploy Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [240, 300],
+      "webhookId": "devminelab-deploy"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "workflow-run",
+              "leftValue": "={{ $json.workflow_run }}",
+              "rightValue": "",
+              "operator": {
+                "type": "object",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "if-workflow-event",
+      "name": "If Workflow Event",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "success-condition",
+              "leftValue": "={{ $json.workflow_run.conclusion }}",
+              "rightValue": "success",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "caseSensitive": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "if-deploy-success",
+      "name": "If Deploy Success",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [680, 200]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "failure-condition",
+              "leftValue": "={{ $json.workflow_run.conclusion }}",
+              "rightValue": "failure",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "caseSensitive": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "if-deploy-failure",
+      "name": "If Deploy Failure",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [680, 400]
+    },
+    {
+      "parameters": {
+        "url": "={{ $env.SLACK_WEBHOOK_URL }}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"text\": \"🚀 배포 성공!\",\n  \"blocks\": [\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*🚀 배포 완료!*\\n\\n*프로젝트:* {{ $json.repository.name }}\\n*브랜치:* {{ $json.workflow_run.head_branch }}\\n*커밋:* {{ $json.workflow_run.head_commit.message }}\\n*작성자:* {{ $json.workflow_run.head_commit.author.name }}\\n*시간:* {{ new Date($json.workflow_run.updated_at).toLocaleString('ko-KR', {timeZone: 'Asia/Seoul'}) }}\"\n      }\n    },\n    {\n      \"type\": \"actions\",\n      \"elements\": [\n        {\n          \"type\": \"button\",\n          \"text\": {\n            \"type\": \"plain_text\",\n            \"text\": \"사이트 확인\"\n          },\n          \"url\": \"{{ $json.repository.name.includes('dalpum') ? 'https://dalpum.hyoda.kr' : $json.repository.name.includes('crawlcat') ? 'https://crawlcat.hyoda.kr' : $json.repository.name.includes('n-auto') ? 'https://n-auto.hyoda.kr' : $json.repository.name.includes('youtube') ? 'https://ytdn.hyoda.kr' : 'https://miracle.hyoda.kr' }}\",\n          \"style\": \"primary\"\n        },\n        {\n          \"type\": \"button\",\n          \"text\": {\n            \"type\": \"plain_text\",\n            \"text\": \"GitHub 보기\"\n          },\n          \"url\": \"{{ $json.workflow_run.html_url }}\"\n        }\n      ]\n    }\n  ]\n}",
+        "options": {}
+      },
+      "id": "success-notification",
+      "name": "Success Notification",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [900, 100]
+    },
+    {
+      "parameters": {
+        "url": "={{ $env.SLACK_WEBHOOK_URL }}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"text\": \"❌ 배포 실패!\",\n  \"blocks\": [\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*❌ 배포 실패*\\n\\n*프로젝트:* {{ $json.repository.name }}\\n*브랜치:* {{ $json.workflow_run.head_branch }}\\n*커밋:* {{ $json.workflow_run.head_commit.message }}\\n*작성자:* {{ $json.workflow_run.head_commit.author.name }}\\n*에러 시간:* {{ new Date($json.workflow_run.updated_at).toLocaleString('ko-KR', {timeZone: 'Asia/Seoul'}) }}\\n\\n⚠️ 즉시 확인이 필요합니다!\"\n      }\n    },\n    {\n      \"type\": \"actions\",\n      \"elements\": [\n        {\n          \"type\": \"button\",\n          \"text\": {\n            \"type\": \"plain_text\",\n            \"text\": \"로그 확인\"\n          },\n          \"url\": \"{{ $json.workflow_run.html_url }}\",\n          \"style\": \"danger\"\n        },\n        {\n          \"type\": \"button\",\n          \"text\": {\n            \"type\": \"plain_text\",\n            \"text\": \"리포지토리\"\n          },\n          \"url\": \"{{ $json.repository.html_url }}\"\n        }\n      ]\n    }\n  ]\n}",
+        "options": {}
+      },
+      "id": "failure-notification",
+      "name": "Failure Notification",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [900, 500]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "GitHub Deploy Webhook": {
+      "main": [
+        [
+          {
+            "node": "If Workflow Event",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If Workflow Event": {
+      "main": [
+        [
+          {
+            "node": "If Deploy Success",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "If Deploy Failure",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If Deploy Success": {
+      "main": [
+        [
+          {
+            "node": "Success Notification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If Deploy Failure": {
+      "main": [
+        [
+          {
+            "node": "Failure Notification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "1",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  }
+}

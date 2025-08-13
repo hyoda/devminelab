@@ -47,7 +47,7 @@ export default function Footer() {
   };
 
   return (
-    <footer className="relative bg-gradient-to-b from-slate-50 to-slate-100 border-t border-gray-200">
+    <footer className="pt-8 relative bg-gradient-to-b from-slate-50 to-slate-100 border-t border-gray-200">
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-5">
         <div className="absolute inset-0" style={{

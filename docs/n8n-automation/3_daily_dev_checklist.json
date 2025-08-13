@@ -1,0 +1,58 @@
+{
+  "name": "개발자 일일 체크리스트",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 9 * * 1-5"
+            }
+          ]
+        }
+      },
+      "id": "weekday-morning",
+      "name": "평일 오전 9시",
+      "type": "n8n-nodes-base.cron",
+      "typeVersion": 1,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "url": "={{ $env.SLACK_WEBHOOK_URL }}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"text\": \"🌅 DevMineLab 오늘의 체크리스트\",\n  \"blocks\": [\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*🌅 Good Morning! {{ new Date().toLocaleDateString('ko-KR', {weekday: 'long', month: 'long', day: 'numeric'}) }}*\\n\\n오늘도 화이팅! 📝 체크리스트를 확인해보세요:\"\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*🔍 모니터링 & 상태 체크*\\n□ 모든 사이트 정상 작동 확인\\n□ 서버 리소스 사용량 체크\\n□ 에러 로그 확인\\n□ GitHub Actions 실행 상태\"\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*📋 개발 작업*\\n□ 새 이슈/PR 확인\\n□ 코드 리뷰 처리\\n□ 오늘 개발 목표 설정\\n□ 테스트 코드 작성/실행\"\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*🚀 배포 & 운영*\\n□ 배포 대기 중인 기능 확인\\n□ 사용자 피드백 검토\\n□ 성능 지표 분석\\n□ 백업 상태 확인\"\n      }\n    },\n    {\n      \"type\": \"actions\",\n      \"elements\": [\n        {\n          \"type\": \"button\",\n          \"text\": {\n            \"type\": \"plain_text\",\n            \"text\": \"🏠 Dalpum\"\n          },\n          \"url\": \"https://dalpum.hyoda.kr\"\n        },\n        {\n          \"type\": \"button\",\n          \"text\": {\n            \"type\": \"plain_text\",\n            \"text\": \"🐱 Crawlcat\"\n          },\n          \"url\": \"https://crawlcat.hyoda.kr\"\n        },\n        {\n          \"type\": \"button\",\n          \"text\": {\n            \"type\": \"plain_text\",\n            \"text\": \"🤖 N-Auto\"\n          },\n          \"url\": \"https://n-auto.hyoda.kr\"\n        }\n      ]\n    },\n    {\n      \"type\": \"actions\",\n      \"elements\": [\n        {\n          \"type\": \"button\",\n          \"text\": {\n            \"type\": \"plain_text\",\n            \"text\": \"📹 YouTube DL\"\n          },\n          \"url\": \"https://ytdn.hyoda.kr\"\n        },\n        {\n          \"type\": \"button\",\n          \"text\": {\n            \"type\": \"plain_text\",\n            \"text\": \"✨ Miracle\"\n          },\n          \"url\": \"https://miracle.hyoda.kr\"\n        },\n        {\n          \"type\": \"button\",\n          \"text\": {\n            \"type\": \"plain_text\",\n            \"text\": \"📊 GitHub\"\n          },\n          \"url\": \"https://github.com/hyoda\"\n        }\n      ]\n    }\n  ]\n}",
+        "options": {}
+      },
+      "id": "daily-checklist",
+      "name": "Daily Checklist",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [460, 300]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "평일 오전 9시": {
+      "main": [
+        [
+          {
+            "node": "Daily Checklist",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "1",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  }
+}

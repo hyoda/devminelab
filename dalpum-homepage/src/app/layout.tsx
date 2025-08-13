@@ -69,9 +69,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ko" className="scroll-smooth">
+    <html lang="ko" className="scroll-smooth" style={{ colorScheme: 'light' }}>
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="color-scheme" content="light" />
         <link rel="icon" href="/favicon.ico" />
         <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
@@ -80,6 +81,7 @@ export default function RootLayout({
       </head>
       <body
         className={`${inter.variable} ${notoSansKR.variable} font-sans antialiased`}
+        style={{ colorScheme: 'light' }}
       >
         <div className="relative min-h-screen flex flex-col">
           {/* Structured Data for SEO */}

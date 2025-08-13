@@ -1,0 +1,205 @@
+{
+  "name": "크롤캣 대량상품등록 완료 알림",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "crawlcat-bulk-upload",
+        "options": {
+          "noResponseBody": false
+        }
+      },
+      "id": "crawlcat-webhook",
+      "name": "크롤캣 Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [240, 300],
+      "webhookId": "crawlcat-bulk-upload"
+    },
+    {
+      "parameters": {
+        "jsCode": "// 크롤캣에서 전송된 데이터 파싱 및 검증\nconst payload = $json;\n\n// 필수 데이터 추출\nconst taskId = payload.taskId || 'UNKNOWN';\nconst status = payload.status || 'unknown';\nconst totalProducts = payload.totalProducts || 0;\nconst successCount = payload.successCount || 0;\nconst failedCount = payload.failedCount || 0;\nconst startTime = payload.startTime;\nconst endTime = payload.endTime || new Date().toISOString();\nconst errorMessages = payload.errors || [];\n\n// 작업 시간 계산\nlet duration = '계산 불가';\nif (startTime && endTime) {\n  const start = new Date(startTime);\n  const end = new Date(endTime);\n  const diffMs = end - start;\n  const minutes = Math.floor(diffMs / 60000);\n  const seconds = Math.floor((diffMs % 60000) / 1000);\n  duration = `${minutes}분 ${seconds}초`;\n}\n\n// 성공률 계산\nconst successRate = totalProducts > 0 ? ((successCount / totalProducts) * 100).toFixed(1) : '0';\n\n// 상태에 따른 이모지 및 메시지\nlet statusEmoji = '✅';\nlet statusMessage = '성공';\nlet alertLevel = 'good';\n\nif (status === 'completed_with_errors') {\n  statusEmoji = '⚠️';\n  statusMessage = '일부 오류';\n  alertLevel = 'warning';\n} else if (status === 'failed' || successRate < 50) {\n  statusEmoji = '❌';\n  statusMessage = '실패';\n  alertLevel = 'danger';\n}\n\nreturn {\n  taskId,\n  status,\n  statusEmoji,\n  statusMessage,\n  alertLevel,\n  totalProducts,\n  successCount,\n  failedCount,\n  successRate,\n  duration,\n  startTime,\n  endTime,\n  errorMessages,\n  timestamp: new Date().toISOString(),\n  koreanTime: new Date().toLocaleString('ko-KR', {timeZone: 'Asia/Seoul'})\n};"
+      },
+      "id": "process-data",
+      "name": "데이터 처리",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "high-success-rate",
+              "leftValue": "={{ parseFloat($json.successRate) }}",
+              "rightValue": 90,
+              "operator": {
+                "type": "number",
+                "operation": "gte"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "if-high-success",
+      "name": "고성공률 (90% 이상)",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [680, 200]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "medium-success-rate",
+              "leftValue": "={{ parseFloat($json.successRate) }}",
+              "rightValue": 50,
+              "operator": {
+                "type": "number",
+                "operation": "gte"
+              }
+            },
+            {
+              "id": "not-high-success",
+              "leftValue": "={{ parseFloat($json.successRate) }}",
+              "rightValue": 90,
+              "operator": {
+                "type": "number",
+                "operation": "lt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "if-medium-success",
+      "name": "중간성공률 (50-90%)",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [680, 400]
+    },
+    {
+      "parameters": {
+        "url": "={{ $env.SLACK_WEBHOOK_URL }}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"text\": \"🚀 크롤캣 대량상품등록 완료!\",\n  \"blocks\": [\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*🚀 크롤캣 대량상품등록 성공!*\\n\\n{{ $json.statusEmoji }} *작업 완료 - {{ $json.statusMessage }}*\"\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*작업 ID:*\\n{{ $json.taskId }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*총 상품 수:*\\n{{ $json.totalProducts }}개\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*성공:*\\n{{ $json.successCount }}개\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*실패:*\\n{{ $json.failedCount }}개\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*성공률:*\\n{{ $json.successRate }}%\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*소요시간:*\\n{{ $json.duration }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*완료 시간:* {{ $json.koreanTime }}\\n\\n🎉 축하합니다! 높은 성공률로 작업이 완료되었습니다.\"\n      }\n    },\n    {\n      \"type\": \"actions\",\n      \"elements\": [\n        {\n          \"type\": \"button\",\n          \"text\": {\n            \"type\": \"plain_text\",\n            \"text\": \"크롤캣 확인\"\n          },\n          \"url\": \"https://crawlcat.hyoda.kr\",\n          \"style\": \"primary\"\n        }\n      ]\n    }\n  ]\n}",
+        "options": {}
+      },
+      "id": "high-success-notification",
+      "name": "고성공률 알림",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [900, 100]
+    },
+    {
+      "parameters": {
+        "url": "={{ $env.SLACK_WEBHOOK_URL }}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"text\": \"⚠️ 크롤캣 대량상품등록 일부 오류\",\n  \"blocks\": [\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*⚠️ 크롤캣 대량상품등록 완료 (일부 오류)*\\n\\n{{ $json.statusEmoji }} *작업 완료 - {{ $json.statusMessage }}*\"\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*작업 ID:*\\n{{ $json.taskId }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*총 상품 수:*\\n{{ $json.totalProducts }}개\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*성공:*\\n{{ $json.successCount }}개\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*실패:*\\n{{ $json.failedCount }}개\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*성공률:*\\n{{ $json.successRate }}%\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*소요시간:*\\n{{ $json.duration }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*완료 시간:* {{ $json.koreanTime }}\\n\\n💡 일부 상품에서 오류가 발생했습니다. 로그를 확인해보세요.\"\n      }\n    },\n    {\n      \"type\": \"actions\",\n      \"elements\": [\n        {\n          \"type\": \"button\",\n          \"text\": {\n            \"type\": \"plain_text\",\n            \"text\": \"오류 확인\"\n          },\n          \"url\": \"https://crawlcat.hyoda.kr\",\n          \"style\": \"primary\"\n        }\n      ]\n    }\n  ]\n}",
+        "options": {}
+      },
+      "id": "medium-success-notification",
+      "name": "중간성공률 알림",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [900, 300]
+    },
+    {
+      "parameters": {
+        "url": "={{ $env.SLACK_WEBHOOK_URL }}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"text\": \"🚨 크롤캣 대량상품등록 실패!\",\n  \"blocks\": [\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*🚨 크롤캣 대량상품등록 실패*\\n\\n{{ $json.statusEmoji }} *작업 실패 - {{ $json.statusMessage }}*\"\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*작업 ID:*\\n{{ $json.taskId }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*총 상품 수:*\\n{{ $json.totalProducts }}개\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*성공:*\\n{{ $json.successCount }}개\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*실패:*\\n{{ $json.failedCount }}개\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*성공률:*\\n{{ $json.successRate }}%\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*소요시간:*\\n{{ $json.duration }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*실패 시간:* {{ $json.koreanTime }}\\n\\n⚠️ 즉시 확인이 필요합니다! 성공률이 50% 미만입니다.\"\n      }\n    },\n    {\n      \"type\": \"actions\",\n      \"elements\": [\n        {\n          \"type\": \"button\",\n          \"text\": {\n            \"type\": \"plain_text\",\n            \"text\": \"긴급 확인\"\n          },\n          \"url\": \"https://crawlcat.hyoda.kr\",\n          \"style\": \"danger\"\n        }\n      ]\n    }\n  ]\n}",
+        "options": {}
+      },
+      "id": "low-success-notification",
+      "name": "저성공률 알림",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [900, 500]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "크롤캣 Webhook": {
+      "main": [
+        [
+          {
+            "node": "데이터 처리",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "데이터 처리": {
+      "main": [
+        [
+          {
+            "node": "고성공률 (90% 이상)",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "중간성공률 (50-90%)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "고성공률 (90% 이상)": {
+      "main": [
+        [
+          {
+            "node": "고성공률 알림",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "저성공률 알림",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "중간성공률 (50-90%)": {
+      "main": [
+        [
+          {
+            "node": "중간성공률 알림",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "1",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  }
+}

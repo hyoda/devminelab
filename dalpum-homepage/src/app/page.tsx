@@ -615,7 +615,7 @@ export default function Home() {
 
         <main>
           {/* Hero Section */}
-          <section className="bg-hero-pattern py-20 md:py-32">
+          <section className="py-20 md:py-32">
             <div className="container mx-auto px-6 text-center">
               <div className="">
                 <h2 className="text-4xl md:text-6xl font-extrabold text-slate-900 leading-tight">

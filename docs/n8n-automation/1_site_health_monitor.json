@@ -1,0 +1,259 @@
+{
+  "name": "DevMineLab 사이트 상태 모니터링",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "every": 5
+            }
+          ]
+        }
+      },
+      "id": "cron-health-check",
+      "name": "Every 5 Minutes",
+      "type": "n8n-nodes-base.cron",
+      "typeVersion": 1,
+      "position": [260, 300]
+    },
+    {
+      "parameters": {
+        "url": "https://dalpum.hyoda.kr",
+        "options": {
+          "timeout": 10000
+        }
+      },
+      "id": "check-dalpum",
+      "name": "Check Dalpum",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [480, 180]
+    },
+    {
+      "parameters": {
+        "url": "https://crawlcat.hyoda.kr",
+        "options": {
+          "timeout": 10000
+        }
+      },
+      "id": "check-crawlcat",
+      "name": "Check Crawlcat",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [480, 280]
+    },
+    {
+      "parameters": {
+        "url": "https://n-auto.hyoda.kr",
+        "options": {
+          "timeout": 10000
+        }
+      },
+      "id": "check-nauto",
+      "name": "Check N-Auto",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [480, 380]
+    },
+    {
+      "parameters": {
+        "url": "https://ytdn.hyoda.kr",
+        "options": {
+          "timeout": 10000
+        }
+      },
+      "id": "check-ytdn",
+      "name": "Check YouTube Downloader",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [480, 480]
+    },
+    {
+      "parameters": {
+        "url": "https://miracle.hyoda.kr",
+        "options": {
+          "timeout": 10000
+        }
+      },
+      "id": "check-miracle",
+      "name": "Check Miracle",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [480, 580]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "status-check",
+              "leftValue": "={{ $json.statusCode }}",
+              "rightValue": 200,
+              "operator": {
+                "type": "number",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "id": "if-site-down",
+      "name": "If Site Down",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [700, 380]
+    },
+    {
+      "parameters": {
+        "url": "={{ $env.SLACK_WEBHOOK_URL }}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"text\": \"🚨 사이트 장애 발생!\",\n  \"blocks\": [\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*🚨 DevMineLab 사이트 장애*\\n\\n*사이트:* {{ $('Every 5 Minutes').item.json.url }}\\n*상태코드:* {{ $json.statusCode || 'TIMEOUT' }}\\n*시간:* {{ new Date().toLocaleString('ko-KR', {timeZone: 'Asia/Seoul'}) }}\\n\\n즉시 확인이 필요합니다!\"\n      }\n    },\n    {\n      \"type\": \"actions\",\n      \"elements\": [\n        {\n          \"type\": \"button\",\n          \"text\": {\n            \"type\": \"plain_text\",\n            \"text\": \"사이트 확인\"\n          },\n          \"url\": \"{{ $('Every 5 Minutes').item.json.url }}\",\n          \"style\": \"danger\"\n        }\n      ]\n    }\n  ]\n}",
+        "options": {}
+      },
+      "id": "emergency-alert",
+      "name": "Emergency Alert",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [920, 280]
+    },
+    {
+      "parameters": {
+        "url": "={{ $env.SLACK_WEBHOOK_URL }}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"text\": \"✅ DevMineLab 사이트 상태 양호\",\n  \"blocks\": [\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*✅ 모든 사이트 정상 운영중*\\n\\n• Dalpum: https://dalpum.hyoda.kr\\n• Crawlcat: https://crawlcat.hyoda.kr\\n• N-Auto: https://n-auto.hyoda.kr\\n• YouTube DL: https://ytdn.hyoda.kr\\n• Miracle: https://miracle.hyoda.kr\\n\\n*체크 시간:* {{ new Date().toLocaleString('ko-KR', {timeZone: 'Asia/Seoul'}) }}\"\n      }\n    }\n  ]\n}",
+        "options": {}
+      },
+      "id": "status-ok",
+      "name": "Daily Status OK",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [920, 480]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Every 5 Minutes": {
+      "main": [
+        [
+          {
+            "node": "Check Dalpum",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Check Crawlcat",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Check N-Auto",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Check YouTube Downloader",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Check Miracle",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Dalpum": {
+      "main": [
+        [
+          {
+            "node": "If Site Down",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Crawlcat": {
+      "main": [
+        [
+          {
+            "node": "If Site Down",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check N-Auto": {
+      "main": [
+        [
+          {
+            "node": "If Site Down",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check YouTube Downloader": {
+      "main": [
+        [
+          {
+            "node": "If Site Down",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Miracle": {
+      "main": [
+        [
+          {
+            "node": "If Site Down",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If Site Down": {
+      "main": [
+        [
+          {
+            "node": "Emergency Alert",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Daily Status OK",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "1",
+  "meta": {
+    "templateCredsSetupCompleted": true
+  }
+}

@@ -1,0 +1,175 @@
+{
+  "name": "사이트 성능 모니터링",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 */6 * * *"
+            }
+          ]
+        }
+      },
+      "id": "every-6-hours",
+      "name": "매 6시간마다",
+      "type": "n8n-nodes-base.cron",
+      "typeVersion": 1,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "url": "https://dalpum.hyoda.kr",
+        "options": {
+          "timeout": 10000,
+          "response": {
+            "response": {
+              "neverError": true,
+              "responseFormat": "autodetect",
+              "outputPropertyName": "data"
+            }
+          }
+        }
+      },
+      "id": "check-dalpum-perf",
+      "name": "Dalpum 성능 체크",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [460, 200]
+    },
+    {
+      "parameters": {
+        "url": "https://crawlcat.hyoda.kr",
+        "options": {
+          "timeout": 10000,
+          "response": {
+            "response": {
+              "neverError": true,
+              "responseFormat": "autodetect",
+              "outputPropertyName": "data"
+            }
+          }
+        }
+      },
+      "id": "check-crawlcat-perf",
+      "name": "Crawlcat 성능 체크",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "url": "https://n-auto.hyoda.kr",
+        "options": {
+          "timeout": 10000,
+          "response": {
+            "response": {
+              "neverError": true,
+              "responseFormat": "autodetect",
+              "outputPropertyName": "data"
+            }
+          }
+        }
+      },
+      "id": "check-nauto-perf",
+      "name": "N-Auto 성능 체크",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [460, 400]
+    },
+    {
+      "parameters": {
+        "jsCode": "// 응답 시간 및 상태 분석\nconst results = [];\nconst items = $input.all();\n\nfor (const item of items) {\n  const nodeData = item.json;\n  const url = nodeData.url || 'Unknown';\n  const statusCode = nodeData.statusCode || 0;\n  const responseTime = nodeData.responseTime || 0;\n  \n  // 사이트별 이름 추출\n  let siteName = 'Unknown';\n  if (url.includes('dalpum')) siteName = 'Dalpum';\n  else if (url.includes('crawlcat')) siteName = 'Crawlcat';\n  else if (url.includes('n-auto')) siteName = 'N-Auto';\n  else if (url.includes('ytdn')) siteName = 'YouTube Downloader';\n  else if (url.includes('miracle')) siteName = 'Miracle';\n  \n  // 성능 평가\n  let performance = '🟢 양호';\n  if (responseTime > 3000) performance = '🔴 느림';\n  else if (responseTime > 1500) performance = '🟡 보통';\n  \n  // 상태 평가\n  let status = '✅ 정상';\n  if (statusCode !== 200) status = '❌ 오류';\n  \n  results.push({\n    siteName,\n    url,\n    statusCode,\n    responseTime,\n    performance,\n    status,\n    timestamp: new Date().toISOString()\n  });\n}\n\nreturn results;"
+      },
+      "id": "analyze-performance",
+      "name": "성능 분석",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [680, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "slow-response",
+              "leftValue": "={{ $json.responseTime }}",
+              "rightValue": 3000,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            },
+            {
+              "id": "error-status",
+              "leftValue": "={{ $json.statusCode }}",
+              "rightValue": 200,
+              "operator": {
+                "type": "number",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "id": "if-performance-issue",
+      "name": "성능 이슈 있음",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [900, 200]
+    },
+    {
+      "parameters": {
+        "url": "={{ $env.SLACK_WEBHOOK_URL }}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"text\": \"⚡ 성능 이슈 발견\",\n  \"blocks\": [\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*⚡ 성능 이슈 발견*\\n\\n*사이트:* {{ $json.siteName }} ({{ $json.url }})\\n*응답시간:* {{ $json.responseTime }}ms\\n*상태코드:* {{ $json.statusCode }}\\n*상태:* {{ $json.status }}\\n*성능:* {{ $json.performance }}\\n\\n*체크 시간:* {{ new Date().toLocaleString('ko-KR', {timeZone: 'Asia/Seoul'}) }}\"\n      }\n    },\n    {\n      \"type\": \"actions\",\n      \"elements\": [\n        {\n          \"type\": \"button\",\n          \"text\": {\n            \"type\": \"plain_text\",\n            \"text\": \"사이트 확인\"\n          },\n          \"url\": \"{{ $json.url }}\",\n          \"style\": \"primary\"\n        }\n      ]\n    }\n  ]\n}",
+        "options": {}
+      },
+      "id": "performance-alert",
+      "name": "성능 알림",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [1120, 100]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 18 * * *"
+            }
+          ]
+        }
+      },
+      "id": "daily-6pm",
+      "name": "매일 오후 6시",
+      "type": "n8n-nodes-base.cron",
+      "typeVersion": 1,
+      "position": [240, 600]
+    },
+    {
+      "parameters": {
+        "url": "={{ $env.SLACK_WEBHOOK_URL }}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"text\": \"📊 DevMineLab 일일 성능 리포트\",\n  \"blocks\": [\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*📊 오늘의 성능 리포트*\\n\\n*{{ new Date().toLocaleDateString('ko-KR', {year: 'numeric', month: 'long', day: 'numeric', weekday: 'long'}) }}*\\n\\n모든 사이트가 정상 운영되고 있습니다! 🎉\"\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*🏠 Dalpum (남해 워케이션)*\\n• URL: https://dalpum.hyoda.kr\\n• 상태: 정상 운영\\n• 최근 업데이트: 남해타임즈 검색 API\\n\\n*🐱 Crawlcat (쿠팡 도구)*\\n• URL: https://crawlcat.hyoda.kr\\n• 상태: 정상 운영\\n• 기능: 자동화 크롤링 도구\"\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*🤖 N-Auto (네이버 자동화)*\\n• URL: https://n-auto.hyoda.kr\\n• 상태: 정상 운영\\n\\n*📹 YouTube Downloader*\\n• URL: https://ytdn.hyoda.kr\\n• 상태: 정상 운영\\n\\n*✨ Miracle*\\n• URL: https://miracle.hyoda.kr\\n• 상태: 정상 운영\"\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"💡 *팁:* 성능 이슈가 감지되면 즉시 알림을 받게 됩니다. 문제가 있다면 서버 리소스나 네트워크 상태를 확인해보세요.\"\n      }\n    }\n  ]\n}",
+        "options": {}
+      },
+      "id": "daily-performance-report",
+      "name": "일일 성능 리포트",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [460, 600]
+    }
+  ],
+  "pinData": {},\n  \"connections\": {\n    \"매 6시간마다\": {\n      \"main\": [\n        [\n          {\n            \"node\": \"Dalpum 성능 체크\",\n            \"type\": \"main\",\n            \"index\": 0\n          },\n          {\n            \"node\": \"Crawlcat 성능 체크\",\n            \"type\": \"main\",\n            \"index\": 0\n          },\n          {\n            \"node\": \"N-Auto 성능 체크\",\n            \"type\": \"main\",\n            \"index\": 0\n          }\n        ]\n      ]\n    },\n    \"Dalpum 성능 체크\": {\n      \"main\": [\n        [\n          {\n            \"node\": \"성능 분석\",\n            \"type\": \"main\",\n            \"index\": 0\n          }\n        ]\n      ]\n    },\n    \"Crawlcat 성능 체크\": {\n      \"main\": [\n        [\n          {\n            \"node\": \"성능 분석\",\n            \"type\": \"main\",\n            \"index\": 0\n          }\n        ]\n      ]\n    },\n    \"N-Auto 성능 체크\": {\n      \"main\": [\n        [\n          {\n            \"node\": \"성능 분석\",\n            \"type\": \"main\",\n            \"index\": 0\n          }\n        ]\n      ]\n    },\n    \"성능 분석\": {\n      \"main\": [\n        [\n          {\n            \"node\": \"성능 이슈 있음\",\n            \"type\": \"main\",\n            \"index\": 0\n          }\n        ]\n      ]\n    },\n    \"성능 이슈 있음\": {\n      \"main\": [\n        [\n          {\n            \"node\": \"성능 알림\",\n            \"type\": \"main\",\n            \"index\": 0\n          }\n        ]\n      ]\n    },\n    \"매일 오후 6시\": {\n      \"main\": [\n        [\n          {\n            \"node\": \"일일 성능 리포트\",\n            \"type\": \"main\",\n            \"index\": 0\n          }\n        ]\n      ]\n    }\n  },\n  \"active\": true,\n  \"settings\": {\n    \"executionOrder\": \"v1\"\n  },\n  \"versionId\": \"1\",\n  \"meta\": {\n    \"templateCredsSetupCompleted\": true\n  }\n}
